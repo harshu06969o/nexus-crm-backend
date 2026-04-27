@@ -37,12 +37,11 @@ public class SecurityConfig {
         .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable()))
         .authorizeHttpRequests(
             auth ->
-                auth.requestMatchers("/api/auth/**", "/h2-console/**", "/swagger-ui/**", "/v3/api-docs/**")
-                    .permitAll()
-                    .requestMatchers("/api/**")
-                    .authenticated()
-                    .anyRequest()
-                    .permitAll())
+                auth
+                    .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll() // <--- YE NAYI LINE ADD KARO
+                    .requestMatchers("/api/auth/**", "/h2-console/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                    .requestMatchers("/api/**").authenticated()
+                    .anyRequest().permitAll())
         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
     return http.build();
@@ -63,14 +62,14 @@ public class SecurityConfig {
   public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration config = new CorsConfiguration();
     
-    // YAHAN CHANGE KIYA HAI: Localhost aur Vercel dono ko allow kiya hai
     config.setAllowedOrigins(List.of(
         "http://localhost:5173", 
         "https://necxus-crm-frontend.vercel.app"
     ));
     
     config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-    config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+    config.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept", "X-Requested-With")); // <-- Headers badhaye hain
+    config.setAllowCredentials(true); // <--- YE BOHOT ZAROORI HAI LOGIN KE LIYE
 
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     source.registerCorsConfiguration("/**", config);
