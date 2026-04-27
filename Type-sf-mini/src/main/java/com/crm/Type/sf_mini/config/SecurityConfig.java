@@ -14,8 +14,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+// Naye Imports
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.core.Ordered;
+import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
@@ -31,14 +35,15 @@ public class SecurityConfig {
 
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
+    // Yahan Spring Security ka default CORS disable kar diya taaki hamara Filter kaam kare
+    http.cors(cors -> cors.disable()) 
         .csrf(csrf -> csrf.disable())
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable()))
         .authorizeHttpRequests(
             auth ->
                 auth
-                    .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll() // <--- YE NAYI LINE ADD KARO
+                    .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll() 
                     .requestMatchers("/api/auth/**", "/h2-console/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                     .requestMatchers("/api/**").authenticated()
                     .anyRequest().permitAll())
@@ -58,22 +63,27 @@ public class SecurityConfig {
     return authConfig.getAuthenticationManager();
   }
 
+  // --- BRAHMASTRA CORS FILTER --- //
+  // Ye Spring Security se pehle chalega aur Vercel ko entry dega
   @Bean
-  public CorsConfigurationSource corsConfigurationSource() {
-    CorsConfiguration config = new CorsConfiguration();
-    
-    config.setAllowedOrigins(List.of(
-        "http://localhost:5173", 
-        "https://necxus-crm-frontend.vercel.app"
-    ));
-    
-    config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-    config.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept", "X-Requested-With")); // <-- Headers badhaye hain
-    config.setAllowCredentials(true); // <--- YE BOHOT ZAROORI HAI LOGIN KE LIYE
-
-    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-    source.registerCorsConfiguration("/**", config);
-    return source;
+  public FilterRegistrationBean<CorsFilter> customCorsFilter() {
+      UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+      CorsConfiguration config = new CorsConfiguration();
+      
+      config.setAllowCredentials(true);
+      config.setAllowedOrigins(List.of(
+          "http://localhost:5173", 
+          "https://necxus-crm-frontend.vercel.app"
+      ));
+      
+      config.setAllowedHeaders(List.of("*"));
+      config.setAllowedMethods(List.of("*"));
+      
+      source.registerCorsConfiguration("/**", config);
+      
+      FilterRegistrationBean<CorsFilter> bean = new FilterRegistrationBean<>(new CorsFilter(source));
+      bean.setOrder(Ordered.HIGHEST_PRECEDENCE); 
+      
+      return bean;
   }
 }
-
