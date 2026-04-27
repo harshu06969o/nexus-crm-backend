@@ -63,18 +63,16 @@ public class SecurityConfig {
     return authConfig.getAuthenticationManager();
   }
 
-  // --- BRAHMASTRA CORS FILTER --- //
-  // Ye Spring Security se pehle chalega aur Vercel ko entry dega
+ 
   @Bean
   public FilterRegistrationBean<CorsFilter> customCorsFilter() {
       UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
       CorsConfiguration config = new CorsConfiguration();
       
       config.setAllowCredentials(true);
-      config.setAllowedOrigins(List.of(
-          "http://localhost:5173", 
-          "https://necxus-crm-frontend.vercel.app"
-      ));
+      
+      
+      config.setAllowedOriginPatterns(List.of("*")); 
       
       config.setAllowedHeaders(List.of("*"));
       config.setAllowedMethods(List.of("*"));
