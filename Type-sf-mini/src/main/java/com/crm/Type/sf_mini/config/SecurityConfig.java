@@ -62,7 +62,13 @@ public class SecurityConfig {
   @Bean
   public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration config = new CorsConfiguration();
-    config.setAllowedOrigins(List.of("http://localhost:5173"));
+    
+    // YAHAN CHANGE KIYA HAI: Localhost aur Vercel dono ko allow kiya hai
+    config.setAllowedOrigins(List.of(
+        "http://localhost:5173", 
+        "https://necxus-crm-frontend.vercel.app"
+    ));
+    
     config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
     config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
 
