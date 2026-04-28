@@ -11,16 +11,19 @@
 * **Language:** Java 21
 * **Framework:** Spring Boot 3
 * **Security:** Spring Security & JWT (Stateless Authentication)
-* **Database:** PostgreSQL (Neon Serverless Cloud)
+* **Database:** PostgreSQL (Neon Serverless Cloud) & Spring Data JPA
+* **API Documentation:** Swagger UI / OpenAPI 3.0
 * **Containerization:** Docker
 * **Deployment:** Render
 
 ## ✨ Key Features
 
+* **N-Tier Architecture:** Clean separation of concerns using Controller, Service, and Repository layers.
 * **Role-Based Access Control (RBAC):** Secure endpoints with custom JWT authentication filters.
-* **Optimized CORS Configuration:** Built a high-precedence custom CORS filter to ensure seamless communication with Vercel-deployed frontend environments.
-* **Stateless Architecture:** Fully stateless session management ensuring high scalability.
-* **Containerized Deployment:** Includes a multi-stage `Dockerfile` optimized for minimal image size and fast cloud deployments.
+* **Interactive API Docs:** Fully integrated Swagger/OpenAPI for real-time endpoint testing and documentation.
+* **Centralized Error Handling:** Implemented a `GlobalExceptionHandler` for consistent, user-friendly API responses.
+* **Optimized CORS Configuration:** Built a high-precedence custom CORS filter for seamless frontend-backend communication.
+* **Stateless & Containerized:** Fully stateless session management deployed via optimized multi-stage Docker builds.
 
 ## ⚙️ Local Setup Instructions
 
